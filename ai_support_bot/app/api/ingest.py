@@ -1,19 +1,33 @@
 from fastapi import APIRouter, UploadFile, File
 from app.utils import load_pdf, split_text
 from app.vector_store import create_vectorstore
-import app.state
+import app.state as state
 
 router = APIRouter()
 
 @router.post("/upload")
 async def upload(file: UploadFile = File(...)):
 
-    text = load_pdf(file.file)
-    chunks = split_text(text)
+    try:
+        # read pdf
+        text = load_pdf(file.file)
 
-    vector_db = create_vectorstore(chunks)
+        if not text:
+            return {"error": "PDF empty or unreadable"}
 
-    # 🔥 SAVE PROPERLY (IMPORTANT FIX)
-    app.state.db = vector_db
+        # split
+        chunks = split_text(text)
 
-    return {"message": "PDF uploaded successfully"}
+        # create vector store
+        db = create_vectorstore(chunks)
+
+        if db is None:
+            return {"error": "Vector store creation failed"}
+
+        state.vector_store = db
+
+        return {"message": "PDF uploaded successfully"}
+
+    except Exception as e:
+        print("UPLOAD ERROR:", e)
+        return {"error": str(e)}

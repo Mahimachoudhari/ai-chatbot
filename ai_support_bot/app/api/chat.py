@@ -1,16 +1,17 @@
 from fastapi import APIRouter
+import app.state as state
 from app.rag import generate_answer
-import app.state
 
 router = APIRouter()
 
 @router.get("/ask")
 def ask(query: str):
 
-    if app.state.db is None:
+    print("VECTOR STORE:", state.vector_store)  
+
+    if state.vector_store is None:
         return {"answer": "⚠️ Please upload PDF first"}
 
-    docs = app.state.db.similarity_search(query, k=3)
-    context = "\n".join([d.page_content for d in docs])
-
-    return {"answer": generate_answer(context, query)}
+    return {
+        "answer": generate_answer(query, state.vector_store)
+    }

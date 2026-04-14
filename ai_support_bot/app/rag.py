@@ -2,19 +2,16 @@ from langchain_community.llms import Ollama
 
 llm = Ollama(model="mistral")
 
-def generate_answer(context, query):
-    prompt = f"""
-You are a ChatGPT-like AI assistant.
+def generate_answer(query, vector_store):
 
-Context:
-{context}
+    docs = vector_store.similarity_search(query)
 
-Question:
-{query}
+    context = "\n".join([d.page_content for d in docs])
 
-Give a proper, helpful answer.
-"""
+    return llm.invoke(f"""
+    Context:
+    {context}
 
-    response = llm.invoke(prompt)
-
-    return response
+    Question:
+    {query}
+    """)

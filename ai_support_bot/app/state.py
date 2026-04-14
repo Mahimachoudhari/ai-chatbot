@@ -1,3 +1,3 @@
 # shared global state (SAFE way)
 
-db = None
+vector_store = None
