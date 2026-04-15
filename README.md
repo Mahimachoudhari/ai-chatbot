@@ -72,6 +72,8 @@ http://127.0.0.1:8000/redoc
 Custom UI:
 http://127.0.0.1:8000/ui
 
+Demo link:https://drive.google.com/file/d/1xgfJqwlXjizTs43XRZmZGsHuo0SSDAbP/view?usp=drivesdk
+
 API Endpoints
 
 Upload PDF:
